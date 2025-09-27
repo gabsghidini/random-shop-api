@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+
+const sourceMapSupport = require('source-map-support')
+sourceMapSupport.install({ handleUncaughtExceptions: false })
+
+const { Ignitor } = require('@adonisjs/core/build/standalone')
+
+new Ignitor(__dirname)
+  .ace()
+  .handle(process.argv.slice(2))

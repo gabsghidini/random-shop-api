@@ -1,0 +1,454 @@
+{
+    "_type": "export",
+    "__export_format": 4,
+    "__export_date": "2025-09-27T21:00:00.000Z",
+    "__export_source": "insomnia.desktop.app:v2023.5.8",
+    "resources": [
+        {
+            "_id": "req_health_check",
+            "parentId": "fld_random_shopping_api",
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "url": "{{ _.base_url }}/health",
+            "name": "Health Check",
+            "description": "Verifica o status da API e do banco de dados",
+            "method": "GET",
+            "body": {},
+            "parameters": [],
+            "headers": [],
+            "authentication": {},
+            "metaSortKey": -1695840000000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request",
+            "afterResponseScript": "// Health check tests\nconst responseBody = insomnia.response.json();\nconst status = insomnia.response.status;\n\ninsomnia.test('✅ Health check successful', () => {\n  insomnia.expect(status).to.equal('OK');\n});\n\ninsomnia.test('✅ Response has status', () => {\n  insomnia.expect(responseBody).to.have.property('status');\n});\n\ninsomnia.test('✅ API is healthy', () => {\n  insomnia.expect(responseBody.status).to.equal('healthy');\n});\n\nconsole.log('🏥 Health check completed:', responseBody.status);"
+        },
+        {
+            "_id": "req_instructions",
+            "parentId": "fld_random_shopping_api",
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "url": "{{ _.base_url }}/health",
+            "name": "📋 INSTRUÇÕES - Leia Primeiro!",
+            "description": "🚀 COMO TESTAR O CONTROLE DE ESTOQUE (AUTOMÁTICO):\n\n1. Execute 'Criar Item - Estoque Único' \n   ✅ O ID será capturado AUTOMATICAMENTE na variável 'single_item_id'\n\n2. Execute 'Comprar Item Único - SUCESSO' (deve funcionar)\n\n3. Execute 'Comprar Item Único - ERRO ESTOQUE' (deve dar erro 422)\n\n🔄 PARA RESETAR O DB:\nnode ace migration:refresh --seed\n\n📋 VARIÁVEIS (atualizadas automaticamente):\n- base_url: URL da API\n- single_item_id: ID do item com estoque único (auto-capturado)\n\n🎯 FLUXO COMPLETO AUTOMATIZADO - SEM CONFIGURAÇÃO MANUAL!",
+            "method": "GET",
+            "body": {},
+            "parameters": [],
+            "headers": [],
+            "authentication": {},
+            "metaSortKey": -1695840500000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "req_list_items",
+            "parentId": "fld_items",
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "url": "{{ _.base_url }}/itens",
+            "name": "Listar Itens",
+            "description": "Lista todos os itens disponíveis no catálogo",
+            "method": "GET",
+            "body": {},
+            "parameters": [],
+            "headers": [],
+            "authentication": {},
+            "metaSortKey": -1695840000000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request",
+            "afterResponseScript": "// List items tests\nconst responseBody = insomnia.response.json();\nconst status = insomnia.response.status;\n\ninsomnia.test('✅ Items listed successfully', () => {\n  insomnia.expect(status).to.equal('OK');\n});\n\ninsomnia.test('✅ Response has data array', () => {\n  insomnia.expect(responseBody).to.have.property('data');\n  insomnia.expect(responseBody.data).to.be.an('array');\n});\n\ninsomnia.test('📦 Items have required fields', () => {\n  if (responseBody.data.length > 0) {\n    const item = responseBody.data[0];\n    insomnia.expect(item).to.have.property('id');\n    insomnia.expect(item).to.have.property('nome');\n    insomnia.expect(item).to.have.property('preco');\n    insomnia.expect(item).to.have.property('qtd_atual');\n  }\n});\n\nconsole.log('📦 Found', responseBody.data.length, 'items');"
+        },
+        {
+            "_id": "req_create_item",
+            "parentId": "fld_items",
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "url": "{{ _.base_url }}/itens",
+            "name": "Criar Item",
+            "description": "Cria um novo item no catálogo",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"nome\": \"Smartphone Samsung Galaxy S23\",\n  \"preco\": 899.99,\n  \"qtdAtual\": 10\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1695839000000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request",
+            "afterResponseScript": "// Create item tests\nconst responseBody = insomnia.response.json();\nconst status = insomnia.response.status;\n\ninsomnia.test('✅ Item created successfully', () => {\n  insomnia.expect(status).to.equal('Created');\n});\n\ninsomnia.test('✅ Response has item data', () => {\n  insomnia.expect(responseBody).to.have.property('data');\n});\n\ninsomnia.test('✅ Item has all required fields', () => {\n  insomnia.expect(responseBody.data).to.have.property('id');\n  insomnia.expect(responseBody.data).to.have.property('nome');\n  insomnia.expect(responseBody.data).to.have.property('preco');\n  insomnia.expect(responseBody.data).to.have.property('qtd_atual');\n});\n\nconsole.log('📦 Item criado:', responseBody.data.nome);"
+        },
+        {
+            "_id": "req_create_item_validation_error",
+            "parentId": "fld_items",
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "url": "{{ _.base_url }}/itens",
+            "name": "Criar Item - Erro de Validação",
+            "description": "Testa erro de validação com dados inválidos",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"nome\": \"\",\n  \"preco\": -10,\n  \"qtdAtual\": -5\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1695838000000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request",
+            "afterResponseScript": "// Validation error tests\nconst responseBody = insomnia.response.json();\nconst status = insomnia.response.status;\n\ninsomnia.test('🚫 Validation error - Status Bad Request', () => {\n  insomnia.expect(status).to.equal('Bad Request');\n});\n\ninsomnia.test('✅ Response has error details', () => {\n  insomnia.expect(responseBody).to.have.property('error');\n});\n\ninsomnia.test('✅ Error has validation message', () => {\n  insomnia.expect(responseBody.error).to.have.property('message');\n});\n\nconsole.log('🚫 Validation error:', responseBody.error.message);"
+        },
+        {
+            "_id": "req_create_item_single_stock",
+            "parentId": "fld_items",
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "url": "{{ _.base_url }}/itens",
+            "name": "🔥 Criar Item - Estoque Único",
+            "description": "Cria um item com apenas 1 unidade para testar controle de estoque. AUTOMATICAMENTE salva o ID na variável 'single_item_id'!",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"nome\": \"Item Limitado - Apenas 1 Unidade\",\n  \"preco\": 999.99,\n  \"qtdAtual\": 1\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1695837500000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request",
+            "afterResponseScript": "// Captura automaticamente o ID do item criado e salva na variável de ambiente\nconst responseBody = insomnia.response.json();\nconst status = insomnia.response.status;\n\n// Testes\ninsomnia.test('✅ Status is Created (201)', () => {\n  insomnia.expect(status).to.equal('Created');\n});\n\ninsomnia.test('✅ Response has data object', () => {\n  insomnia.expect(responseBody).to.have.property('data');\n});\n\ninsomnia.test('✅ Item has ID', () => {\n  insomnia.expect(responseBody.data).to.have.property('id');\n});\n\ninsomnia.test('✅ Item has correct stock quantity', () => {\n  insomnia.expect(responseBody.data.qtd_atual).to.equal(1);\n});\n\nif (responseBody && responseBody.data && responseBody.data.id) {\n  // Salva o ID na variável de ambiente\n  await insomnia.environment.set('single_item_id', responseBody.data.id.toString());\n  \n  // Log para confirmar\n  console.log('✅ ID do item capturado automaticamente:', responseBody.data.id);\n  console.log('🔄 Variável single_item_id atualizada!');\n} else {\n  console.log('❌ Erro: Não foi possível capturar o ID do item');\n  console.log('Response:', responseBody);\n}"
+        },
+        {
+            "_id": "req_list_compras",
+            "parentId": "fld_compras",
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "url": "{{ _.base_url }}/compras",
+            "name": "Listar Compras",
+            "description": "Lista todas as compras realizadas",
+            "method": "GET",
+            "body": {},
+            "parameters": [],
+            "headers": [],
+            "authentication": {},
+            "metaSortKey": -1695840000000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request",
+            "afterResponseScript": "// List purchases tests\nconst responseBody = insomnia.response.json();\nconst status = insomnia.response.status;\n\ninsomnia.test('✅ Purchases listed successfully', () => {\n  insomnia.expect(status).to.equal('OK');\n});\n\ninsomnia.test('✅ Response has data array', () => {\n  insomnia.expect(responseBody).to.have.property('data');\n  insomnia.expect(responseBody.data).to.be.an('array');\n});\n\ninsomnia.test('🛒 Purchases have required fields', () => {\n  if (responseBody.data.length > 0) {\n    const purchase = responseBody.data[0];\n    insomnia.expect(purchase).to.have.property('id');\n    insomnia.expect(purchase).to.have.property('comprador_github_login');\n    insomnia.expect(purchase).to.have.property('item');\n  }\n});\n\nconsole.log('🛒 Found', responseBody.data.length, 'purchases');"
+        },
+        {
+            "_id": "req_create_compra",
+            "parentId": "fld_compras",
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "url": "{{ _.base_url }}/compras",
+            "name": "Criar Compra",
+            "description": "Realiza uma nova compra",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"item_id\": 1\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1695839000000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request",
+            "afterResponseScript": "// Create purchase tests\nconst responseBody = insomnia.response.json();\nconst status = insomnia.response.status;\n\ninsomnia.test('✅ Purchase created successfully', () => {\n  insomnia.expect(status).to.equal('Created');\n});\n\ninsomnia.test('✅ Response has purchase data', () => {\n  insomnia.expect(responseBody).to.have.property('data');\n});\n\ninsomnia.test('✅ Purchase has buyer info', () => {\n  insomnia.expect(responseBody.data).to.have.property('comprador_github_login');\n});\n\ninsomnia.test('✅ Purchase has item details', () => {\n  insomnia.expect(responseBody.data).to.have.property('item');\n});\n\nconsole.log('🛒 Purchase created for:', responseBody.data.comprador_github_login);"
+        },
+        {
+            "_id": "req_create_compra_item_not_found",
+            "parentId": "fld_compras",
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "url": "{{ _.base_url }}/compras",
+            "name": "Criar Compra - Item Não Encontrado",
+            "description": "Testa erro de item não encontrado",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"item_id\": 99999\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1695837000000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request",
+            "afterResponseScript": "// Test for item not found error\nconst responseBody = insomnia.response.json();\nconst status = insomnia.response.status;\n\n// Testes\ninsomnia.test('✅ Status is Bad Request (400)', () => {\n  insomnia.expect(status).to.equal('Bad Request');\n});\n\ninsomnia.test('✅ Response has error object', () => {\n  insomnia.expect(responseBody).to.have.property('error');\n});\n\ninsomnia.test('✅ Error indicates validation issue', () => {\n  insomnia.expect(responseBody.error).to.have.property('message');\n});\n\nconsole.log('✅ Validation error handled correctly');\nconsole.log('Status:', status);\nconsole.log('Error:', responseBody?.error?.message);"
+        },
+        {
+            "_id": "req_create_compra_single_item_success",
+            "parentId": "fld_compras",
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "url": "{{ _.base_url }}/compras",
+            "name": "🛒 Comprar Item Único - SUCESSO",
+            "description": "Compra o item com apenas 1 unidade (deve funcionar na primeira vez). Usa automaticamente o ID capturado!",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"item_id\": \"{{ _.single_item_id }}\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1695836500000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request",
+            "afterResponseScript": "// Feedback visual do resultado da compra\nconst responseBody = insomnia.response.json();\nconst status = insomnia.response.status;\n\n// Testes\ninsomnia.test('🎉 Purchase successful - Status Created (201)', () => {\n  insomnia.expect(status).to.equal('Created');\n});\n\ninsomnia.test('✅ Response has purchase data', () => {\n  insomnia.expect(responseBody).to.have.property('data');\n});\n\ninsomnia.test('✅ Purchase has buyer GitHub login', () => {\n  insomnia.expect(responseBody.data).to.have.property('comprador_github_login');\n});\n\ninsomnia.test('✅ Purchase has item details', () => {\n  insomnia.expect(responseBody.data).to.have.property('item');\n  insomnia.expect(responseBody.data.item).to.have.property('nome');\n  insomnia.expect(responseBody.data.item).to.have.property('preco');\n});\n\ninsomnia.test('📊 Stock was decremented to 0', () => {\n  insomnia.expect(responseBody.data.item.qtd_atual).to.equal(0);\n});\n\nif (status === 'Created' && responseBody && responseBody.data) {\n  console.log('🎉 COMPRA REALIZADA COM SUCESSO!');\n  console.log('👤 Comprador GitHub:', responseBody.data.comprador_github_login);\n  console.log('📦 Item:', responseBody.data.item.nome);\n  console.log('💰 Preço:', responseBody.data.item.preco);\n  console.log('📊 Estoque restante:', responseBody.data.item.qtd_atual);\n} else {\n  console.log('❌ Erro na compra:', responseBody?.error?.message || 'Erro desconhecido');\n}"
+        },
+        {
+            "_id": "req_create_compra_single_item_fail",
+            "parentId": "fld_compras",
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "url": "{{ _.base_url }}/compras",
+            "name": "❌ Comprar Item Único - ERRO ESTOQUE",
+            "description": "Tenta comprar o mesmo item novamente (deve dar erro de estoque insuficiente). Demonstra o controle de estoque funcionando!",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"item_id\": \"{{ _.single_item_id }}\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1695836000000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request",
+            "afterResponseScript": "// Feedback visual do erro de estoque\nconst responseBody = insomnia.response.json();\nconst status = insomnia.response.status;\n\n// Testes\ninsomnia.test('🚫 Stock error - Status Unprocessable Entity (422)', () => {\n  insomnia.expect(status).to.equal('Unprocessable Entity');\n});\n\ninsomnia.test('✅ Response has error object', () => {\n  insomnia.expect(responseBody).to.have.property('error');\n});\n\ninsomnia.test('✅ Error has correct code', () => {\n  insomnia.expect(responseBody.error).to.have.property('code');\n});\n\ninsomnia.test('✅ Error has message', () => {\n  insomnia.expect(responseBody.error).to.have.property('message');\n});\n\ninsomnia.test('✅ Error has stock details', () => {\n  insomnia.expect(responseBody.error).to.have.property('details');\n  insomnia.expect(responseBody.error.details).to.have.property('current_stock');\n});\n\ninsomnia.test('📊 Current stock is 0', () => {\n  insomnia.expect(responseBody.error.details.current_stock).to.equal(0);\n});\n\nif (status === 'Unprocessable Entity' && responseBody && responseBody.error) {\n  console.log('✅ ERRO DE ESTOQUE CAPTURADO CORRETAMENTE!');\n  console.log('🚫 Código:', responseBody.error.code);\n  console.log('� Mensageem:', responseBody.error.message);\n  console.log('📊 Estoque atual:', responseBody.error.details.current_stock);\n  console.log('🎯 CONTROLE DE ESTOQUE FUNCIONANDO PERFEITAMENTE!');\n} else {\n  console.log('⚠️ Resposta inesperada. Status:', status);\n  console.log('📄 Response:', responseBody);\n}"
+        },
+        {
+            "_id": "req_swagger_docs",
+            "parentId": "fld_docs",
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "url": "{{ _.base_url }}/docs",
+            "name": "Documentação Swagger",
+            "description": "Acessa a documentação da API",
+            "method": "GET",
+            "body": {},
+            "parameters": [],
+            "headers": [],
+            "authentication": {},
+            "metaSortKey": -1695840000000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request",
+            "afterResponseScript": "// Swagger docs tests\nconst status = insomnia.response.status;\n\ninsomnia.test('✅ Documentation accessible', () => {\n  insomnia.expect(status).to.equal('OK');\n});\n\ninsomnia.test('📚 Swagger UI loaded', () => {\n  const body = insomnia.response.text();\n  insomnia.expect(body).to.include('swagger');\n});\n\nconsole.log('📚 Swagger documentation loaded successfully');"
+        },
+        {
+            "_id": "req_swagger_json",
+            "parentId": "fld_docs",
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "url": "{{ _.base_url }}/swagger.json",
+            "name": "Swagger JSON",
+            "description": "Retorna a especificação OpenAPI em JSON",
+            "method": "GET",
+            "body": {},
+            "parameters": [],
+            "headers": [],
+            "authentication": {},
+            "metaSortKey": -1695839000000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request",
+            "afterResponseScript": "// Swagger JSON tests\nconst responseBody = insomnia.response.json();\nconst status = insomnia.response.status;\n\ninsomnia.test('✅ Swagger JSON accessible', () => {\n  insomnia.expect(status).to.equal('OK');\n});\n\ninsomnia.test('✅ Valid OpenAPI spec', () => {\n  insomnia.expect(responseBody).to.have.property('openapi');\n  insomnia.expect(responseBody).to.have.property('info');\n  insomnia.expect(responseBody).to.have.property('paths');\n});\n\ninsomnia.test('📋 API info present', () => {\n  insomnia.expect(responseBody.info).to.have.property('title');\n  insomnia.expect(responseBody.info).to.have.property('version');\n});\n\nconsole.log('📋 API:', responseBody.info.title, 'v' + responseBody.info.version);"
+        },
+        {
+            "_id": "fld_random_shopping_api",
+            "parentId": "wrk_random_shopping_api",
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "name": "Random Shopping API",
+            "description": "API para gerenciamento de itens e compras",
+            "environment": {},
+            "environmentPropertyOrder": null,
+            "metaSortKey": -1695840000000,
+            "_type": "request_group"
+        },
+        {
+            "_id": "fld_items",
+            "parentId": "wrk_random_shopping_api",
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "name": "📦 Itens",
+            "description": "Endpoints para gerenciamento de itens",
+            "environment": {},
+            "environmentPropertyOrder": null,
+            "metaSortKey": -1695839000000,
+            "_type": "request_group"
+        },
+        {
+            "_id": "fld_compras",
+            "parentId": "wrk_random_shopping_api",
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "name": "🛒 Compras",
+            "description": "Endpoints para gerenciamento de compras",
+            "environment": {},
+            "environmentPropertyOrder": null,
+            "metaSortKey": -1695838000000,
+            "_type": "request_group"
+        },
+        {
+            "_id": "fld_docs",
+            "parentId": "wrk_random_shopping_api",
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "name": "📚 Documentação",
+            "description": "Endpoints de documentação da API",
+            "environment": {},
+            "environmentPropertyOrder": null,
+            "metaSortKey": -1695837000000,
+            "_type": "request_group"
+        },
+        {
+            "_id": "wrk_random_shopping_api",
+            "parentId": null,
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "name": "Random Shopping API",
+            "description": "Collection para testar a API de compras aleatórias",
+            "scope": "collection",
+            "_type": "workspace"
+        },
+        {
+            "_id": "env_base",
+            "parentId": "wrk_random_shopping_api",
+            "modified": 1695840000000,
+            "created": 1695840000000,
+            "name": "Base Environment",
+            "data": {
+                "base_url": "http://localhost:3333",
+                "single_item_id": "ATUALIZE_APÓS_CRIAR_ITEM"
+            },
+            "dataPropertyOrder": {
+                "&": [
+                    "base_url",
+                    "single_item_id"
+                ]
+            },
+            "color": null,
+            "isPrivate": false,
+            "metaSortKey": 1695840000000,
+            "_type": "environment"
+        }
+    ]
+}
